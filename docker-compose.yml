@@ -1,0 +1,38 @@
+name: zitzmann_dev_authentication
+
+services:
+  # mariadb service
+  database:
+    container_name: zid_mariadb
+    image: mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: zitzmann_id
+      MARIADB_ROOT_PASSWORD: hackme
+  # phpmyadmin service
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - database
+    ports:
+      - "8080:80"
+    environment:
+      - MYSQL_ROOT_PASSWORD=hackme
+      - PMA_HOST=database
+  supertokens:
+    image: registry.supertokens.io/supertokens/supertokens-mysql:7.0
+    depends_on:
+      - database
+    ports:
+      - 3567:3567
+    environment:
+      MYSQL_CONNECTION_URI: mysql://root:hackme@database:3306/zitzmann_id
+    restart: unless-stopped
+    healthcheck:
+      test: >
+        bash -c 'exec 3<>/dev/tcp/127.0.0.1/3567 && echo -e "GET /hello HTTP/1.1\r\nhost: 127.0.0.1:3567\r\nConnection: close\r\n\r\n" >&3 && cat <&3 | grep "Hello"'
+      interval: 10s
+      timeout: 5s
+      retries: 5

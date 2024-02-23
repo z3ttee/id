@@ -1,0 +1,20 @@
+{
+    "name": "id",
+    "version": "0.0.1",
+    "author": "z3ttee",
+    "license": "MIT",
+    "private": true,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/z3ttee/id.git"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "devDependencies": {
+        "turbo": "latest"
+    },
+    "workspaces": [
+        "packages/*",
+        "apps/*"
+    ]
+}
